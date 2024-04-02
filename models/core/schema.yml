@@ -12,6 +12,14 @@ models:
       (or leftmost) time, which is assumed to correspond to actual weather events occuring at the mountain. 
       Those cells with times in the future correspond to forecasted weather. 
     columns:
+        - name: fact_forecasts_key
+          description: >
+            Primary key for the table, made from the combination of columns mtn_name, elevation, 
+            local_time_issued, and local_time_of_forecast.
+        - name: geography_key
+          description: Foreign key to dim_geography, derived from mtn_name.
+        - name: topography_key
+          description: Foreign key to dim_topography, derived from mtn_name.
         - name: mtn_name
           description: Name of the mountain.
         - name: elevation
@@ -53,3 +61,59 @@ models:
           description: Elevation where the air temperature is 0 degrees Celsius.
         - name: cloud_base
           description: Lowest altitude of the visible portion of clouds, in m.
+
+  - name: dim_geography
+    description:  >
+      Information related to the geographic location of each mountain, including the mountain
+      range and subrange it is a part of, the latitude and longitude, and the region(s) (i.e., 
+      state/province, etc.) it lies within. The region is related by the foreign key
+      region_group_key through the bridge_region_group bridge table, since some mountains lie
+      on the border between two regions/countries, so this dimension is multivalued.
+    columns:
+        - name: geography_key
+          description: Primary key, derived from mtn_name.
+        - name: mtn_name
+          description: Name of the mountain.
+        - name: region_group_key
+          description: >
+            References column of the same name in bridge_region_group, to indicate which group of regions 
+            (i.e., states/provinces of the relevant country) a particularmountain lies within. Of course 
+            some groups have only one region.
+        - name: mtn_range
+          description: Name of the range where the mountain is found, according to mountain-forecast.com.
+        - name: subrange
+          description: Name of the subrange where the mountain is found, according to mountain-forecast.com.
+        - name: latitude
+          description: Latitude coordinate of the mountain.
+        - name: longitude
+          description: Longitude coordinate of the mountain.
+
+  - name: bridge_region_group
+    description: >
+      Bridge table that relates the region group to the corresponding regions, and appropriate
+      weighting factors. For example, since Kangchenjunga lies on the border between Nepal and 
+      India, it is assigned a value of region_group_key in the dim_geography table which corresponds
+      to the appropriate regions in both of these countries in this table, with weighting factors 
+      of 0.5 each.
+    columns:
+      - name: region_group_key
+        description: Indicates the group of regions a mountain may be in.
+      - name: region_key
+        description: >
+          Foreign key to dim_region, indicating a particular region.
+      - name: weighting_factor
+        description: Equal to 1 / (number of the group's rows), used to normalize calculations.
+
+  - name: dim_region
+    description: >
+      Continent and country where each region (meaning, state/province, subdivision of a 
+      country, etc.) is found.
+    columns:
+        - name: region_key
+          description: Primary key, based on the particular region.
+        - name: region
+          description: Name of the region.
+        - name: continent
+          description: Name of the continent where the region is found.
+        - name: country
+          description: Name of the country where the region is found.

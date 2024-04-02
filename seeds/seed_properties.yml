@@ -22,3 +22,9 @@ seeds:
       Continent and country where each region (meaning, state/province, subdivision of a 
       country, etc.) is found.
 
+  - name: dim_topography_seed
+    description: >
+      Information related to the topography of each mountain, such as elevation at the peak,
+      prominence and isolation, and where the mountain ranks in these categories in terms of
+      all mountains in the world.
+

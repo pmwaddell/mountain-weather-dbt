@@ -8,4 +8,4 @@
 select
     {{ dbt_utils.generate_surrogate_key(['mtn_name']) }} topography_key,
     *
-from {{ ref('dim_geography_seed') }}
+from {{ ref('dim_topography_seed') }}

@@ -13,6 +13,7 @@ select
     }} fact_forecasts_key,
     {{ dbt_utils.generate_surrogate_key(['mtn_name']) }} geography_key,
     {{ dbt_utils.generate_surrogate_key(['mtn_name']) }} topography_key,
+    {{ dbt_utils.generate_surrogate_key(['mtn_name']) }} mountaineering_key,
     mtn_name,
     elevation,
     elev_feature,

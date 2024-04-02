@@ -22,3 +22,24 @@ seeds:
       Continent and country where each region (meaning, state/province, subdivision of a 
       country, etc.) is found.
 
+  - name: dim_topography_seed
+    description: >
+      Information related to the topography of each mountain, such as elevation at the peak,
+      prominence and isolation, and where the mountain ranks in these categories in terms of
+      all mountains in the world.
+
+  - name: dim_mountaineering
+    description: >
+      Information related to mountaineering exploits on each mountain. The data herein proved difficult
+      to find for the most part and is highly approximate. Data for the Himalayan peaks was sourced from
+      himalayandatabase.com, and is the most up-to-date. Information for some of the other 8000ers was
+      taken from 8000ers.com or the Wikipedia article Eight-thousander, specfifically the table
+      Estimated sample death rates for the 14 eight-thousanders. Note that those numbers are over 10 years
+      out of date at this point, and many more ascents have likely occured since this time, likely 
+      comparable to the total ascents recorded in the table. Denali information was taken from the 
+      National Park Service's Annual Mountaineering Summaries. Numbers for Mont Blanc, Vinson Massif,
+      Flattop and Mount Whitney were estimated based on google searches, and are probably not very 
+      reliable. Apparently there have actually been no deaths on Mount Vinson, or at least very few, so 
+      I left the number at 0. Where I couldn't even really estimate the numbers I left the field blank.
+ 
+

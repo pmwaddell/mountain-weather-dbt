@@ -1,0 +1,63 @@
+version: 1
+
+sources:
+  - name: staging
+    database: mountain-weather-data
+    schema: mountain_weather_data
+
+    tables:
+      - name: forecasts
+
+models:
+  - name: stg_forecasts
+    description: >
+      Weather forecast data from mountain-forecast.com for various mountain peaks at various altitudes.
+      Both current weather and forecasted weather is included. Data is organized by the time the forecast
+      is said to be issued on the site.
+      Each record corresponds to a cell in the unexpanded forecast table from the page of the particular
+      mountain on the site, and there are three cells per day: AM, PM, and night. 
+      Here, the term forecast is often used loosely to mean any cell in this table, including the first 
+      (or leftmost) time, which is assumed to correspond to actual weather events occuring at the mountain. 
+      Those cells with times in the future correspond to forecasted weather. 
+    columns:
+        - name: mtn_name
+          description: Name of the mountain.
+        - name: elevation
+          description: Elevation on the mountain where the forecast is measured.
+        - name: elev_feature
+          description: Identifies mountain feature at an elevation, either base, mid or peak.
+        - name: time_of_scrape
+          description: Time when the web scrape to find weather data was run.
+        - name: local_time_issued
+          description: Time when the forecast was issued, in the local timezone of the mountain.
+        - name: forecast_status
+          description: >
+            Indicates whether the weather information relates to the weather that actually is occuring
+            (actual) or forecasted weather (forecast).
+        - name: local_time_of_forecast
+          description: >
+            This column translates the information in forecast_time_name and the corresponding date into
+            a proper timestamp, with AM meaning 7 AM on the listed day, PM meaning 3 PM, and night 
+            meaning 11 PM. These times were selected arbitrarily by the author.
+        - name: forecast_time_name
+          description: >
+            On weather-forecast.com, forecasts are divided into three slots on each day: AM, PM, 
+            and night (see forecast_time_name); this column records the label for each slot. 
+        - name: forecast_phrase
+          description: A string briefly describing the weather condition (e.g., some_clouds).
+        - name: wind_speed
+          description: The wind speed of the forecast, recorded in km/h.
+        - name: snow
+          description: The amount of snow in the forecast, recorded in mm.
+        - name: rain
+          description: The amount of rain in the forecast, recorded in mm.
+        - name: max_temp
+          description: The maximum temp. in the forecast window, in Celsius.
+        - name: min_temp
+          description: The minimum temp. in the forecast window, in Celsius.
+        - name: chill
+          description: The chill in the forecast window, in Celsius.
+        - name: freezing_level
+          description: Elevation where the air temperature is 0 degrees Celsius.
+        - name: cloud_base
+          description: Lowest altitude of the visible portion of clouds, in m.

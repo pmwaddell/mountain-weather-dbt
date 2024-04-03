@@ -1,7 +1,7 @@
 version: 1
 
 seeds:
-  - name: dim_geography
+  - name: dim_geography_seed
     description: >
       Information related to the geographic location of each mountain, including the mountain
       range and subrange it is a part of, the latitude and longitude, and the region(s) (i.e., 
@@ -9,7 +9,7 @@ seeds:
       region_group_key through the bridge_region_group bridge table, since some mountains lie
       on the border between two regions/countries, so this dimension is multivalued.
   
-  - name: bridge_region_group
+  - name: bridge_region_group_seed
     description: >
       Bridge table that relates the region group to the corresponding regions, and appropriate
       weighting factors. For example, since Kangchenjunga lies on the border between Nepal and 
@@ -17,7 +17,7 @@ seeds:
       to the appropriate regions in both of these countries in this table, with weighting factors 
       of 0.5 each.
 
-  - name: dim_region
+  - name: dim_region_seed
     description: >
       Continent and country where each region (meaning, state/province, subdivision of a 
       country, etc.) is found.
@@ -28,7 +28,7 @@ seeds:
       prominence and isolation, and where the mountain ranks in these categories in terms of
       all mountains in the world.
 
-  - name: dim_mountaineering
+  - name: dim_mountaineering_seed
     description: >
       Information related to mountaineering exploits on each mountain. The data herein proved difficult
       to find for the most part and is highly approximate. Data for the Himalayan peaks was sourced from

@@ -18,8 +18,12 @@ models:
             local_time_issued, and local_time_of_forecast.
         - name: geography_key
           description: Foreign key to dim_geography, derived from mtn_name.
+        - name: sun_and_time_zone_key
+          description: Foreign key to dim_sun_and_time_zone, derived from mtn_name.
         - name: topography_key
           description: Foreign key to dim_topography, derived from mtn_name.
+        - name: mountaineering_key
+          description: Foreign key to dim_mountaineering, derived from mtn_name.
         - name: mtn_name
           description: Name of the mountain.
         - name: elevation
@@ -118,6 +122,56 @@ models:
         - name: country
           description: Name of the country where the region is found.
 
+  models:
+  - name: stg_sun_and_time_zone
+    description: >
+      Contains timezone data for each mountain, as well as when the sun rises and sets on them each day.
+      Data is scraped from timeanddate.com.
+    columns:
+        - name: sun_and_time_zone_key
+          description: Primary key, derived from mtn_name.      
+        - name: mtn_name
+          description: Name of the mountain.
+        - name: time_zone
+          description: Name of the time zone where the mountain is located.
+        - name: utc_diff
+          description: Offset of the time zone relative to UTC.
+        - name: scrape_date
+          description: Local date at the mountain when the data was scraped.
+        - name: sunrise_time
+          description: Local time when the sun rises at the mountain on this date.
+        - name: sunset_time
+          description: Local time when the sun sets at the mountain on this date.
+        - name: total_daylight
+          description: >
+          Total amount of daylight on the mountain that day, calculated simply by the difference between 
+          the sunset_time and sunrise_time.
+
+    - name: dim_topography
+      description: >
+        Information related to the topography of each mountain, such as elevation at the peak,
+        prominence and isolation, and where the mountain ranks in these categories in terms of
+        all mountains in the world.
+      columns:
+          - name: topography_key
+            description: Primary key, derived from mtn_name.  
+          - name: mtn_name
+            description: Name of the mountain.
+          - name: elevation
+            description: Height of the mountain's summit.
+          - name: elevation_rank
+            description: Rank of the peak in terms of the world's highest mountains.
+          - name: prominence
+            description: > 
+            Prominence of the mountain (see https://en.wikipedia.org/wiki/Topographic_prominence)
+          - name: prominence_rank
+            description: Rank of the peak in terms of the world's most prominent mountains.
+          - name: isolation
+            description: >
+            Isolation of the mountain (see https://en.wikipedia.org/wiki/Topographic_isolation)
+          - name: isolation_rank
+            description: Rank of the peak in terms of the world's most isolated mountains.
+
   - name: dim_mountaineering
     description: >
       Information related to mountaineering exploits on each mountain. The data herein proved difficult
@@ -132,6 +186,8 @@ models:
       reliable. Apparently there have actually been no deaths on Mount Vinson, or at least very few, so 
       I left the number at 0. Where I couldn't even really estimate the numbers I left the field blank.
     columns:
+      - name: mountaineering_key
+        description: Primary key, derived from mtn_name.  
       - name: mtn_name
         description: Name of the mountain.
       - name: first_ascent

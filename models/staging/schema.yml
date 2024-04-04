@@ -84,6 +84,6 @@ models:
         - name: scrape_date
           description: Local date at the mountain when the data was scraped.
         - name: sunrise_time
-          description: Local time when the sun rises at the mountain on this date, with timestamp.
+          description: Local time when the sun rises at the mountain on this date.
         - name: sunset_time
-          description: Local time when the sun sets at the mountain on this date, with timestamp.
+          description: Local time when the sun sets at the mountain on this date.

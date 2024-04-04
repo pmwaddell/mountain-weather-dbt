@@ -1,13 +1,8 @@
-
-
 with source as (
-
-    select * from {{ source('staging', 'forecasts') }}
-
+    select * from {{ source('forecast_staging', 'forecasts') }}
 ),
 
 renamed as (
-
     select
         mtn_name,
         elevation,
@@ -26,9 +21,7 @@ renamed as (
         chill,
         freezing_level,
         cloud_base
-
     from source
-
 )
 
 select * from renamed

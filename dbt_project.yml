@@ -37,6 +37,5 @@ clean-targets:         # directories to be removed by `dbt clean`
 
 models:
   mountain_weather_dbt:
-    # Applies to all files under models/example/
     core:
       +materialized: table

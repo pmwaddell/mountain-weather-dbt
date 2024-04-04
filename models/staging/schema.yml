@@ -1,13 +1,20 @@
 version: 1
 
 sources:
-  - name: staging
+  - name: forecast_staging
     database: mountain-weather-data
     schema: mountain_weather_data
 
     tables:
       - name: forecasts
 
+  - name: sun_staging
+    database: mountain-weather-data
+    schema: sun_data
+
+    tables:
+      - name: sun_and_time_zone_data
+    
 models:
   - name: stg_forecasts
     description: >
@@ -61,3 +68,22 @@ models:
           description: Elevation where the air temperature is 0 degrees Celsius.
         - name: cloud_base
           description: Lowest altitude of the visible portion of clouds, in m.
+
+models:
+  - name: stg_sun_and_time_zone
+    description: >
+      Contains timezone data for each mountain, as well as when the sun rises and sets on them each day.
+      Data is scraped from timeanddate.com.
+    columns:
+        - name: mtn_name
+          description: Name of the mountain.
+        - name: time_zone
+          description: Name of the time zone where the mountain is located.
+        - name: utc_diff
+          description: Offset of the time zone relative to UTC.
+        - name: scrape_date
+          description: Local date at the mountain when the data was scraped.
+        - name: sunrise_time
+          description: Local time when the sun rises at the mountain on this date, with timestamp.
+        - name: sunset_time
+          description: Local time when the sun sets at the mountain on this date, with timestamp.

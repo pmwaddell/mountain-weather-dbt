@@ -17,7 +17,7 @@ select
     {{ dbt_utils.generate_surrogate_key(['mtn_name']) }} mountaineering_key,
     mtn_name,
     elevation,
-    elev_feature,
+    {{ dbt_utils.generate_surrogate_key(['mtn_name', 'elevation']) }} mf_features_key,
     time_of_scrape,
     local_time_issued,
     forecast_status,

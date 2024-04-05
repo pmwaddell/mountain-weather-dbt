@@ -6,7 +6,6 @@ renamed as (
     select
         mtn_name,
         elevation,
-        elev_feature,
         time_of_scrape,
         local_time_issued,
         forecast_status,

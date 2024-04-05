@@ -12,59 +12,59 @@ models:
       (or leftmost) time, which is assumed to correspond to actual weather events occuring at the mountain. 
       Those cells with times in the future correspond to forecasted weather. 
     columns:
-        - name: fact_forecasts_key
-          description: >
-            Primary key for the table, made from the combination of columns mtn_name, elevation, 
-            local_time_issued, and local_time_of_forecast.
-        - name: geography_key
-          description: Foreign key to dim_geography, derived from mtn_name.
-        - name: sun_and_time_zone_key
-          description: Foreign key to dim_sun_and_time_zone, derived from mtn_name.
-        - name: topography_key
-          description: Foreign key to dim_topography, derived from mtn_name.
-        - name: mountaineering_key
-          description: Foreign key to dim_mountaineering, derived from mtn_name.
-        - name: mtn_name
-          description: Name of the mountain.
-        - name: elevation
-          description: Elevation on the mountain where the forecast is measured.
-        - name: elev_feature
-          description: Identifies mountain feature at an elevation, either base, mid or peak.
-        - name: time_of_scrape
-          description: Time when the web scrape to find weather data was run.
-        - name: local_time_issued
-          description: Time when the forecast was issued, in the local timezone of the mountain.
-        - name: forecast_status
-          description: >
-            Indicates whether the weather information relates to the weather that actually is occuring
-            (actual) or forecasted weather (forecast).
-        - name: local_time_of_forecast
-          description: >
-            This column translates the information in forecast_time_name and the corresponding date into
-            a proper timestamp, with AM meaning 7 AM on the listed day, PM meaning 3 PM, and night 
-            meaning 11 PM. These times were selected arbitrarily by the author.
-        - name: forecast_time_name
-          description: >
-            On weather-forecast.com, forecasts are divided into three slots on each day: AM, PM, 
-            and night (see forecast_time_name); this column records the label for each slot. 
-        - name: forecast_phrase
-          description: A string briefly describing the weather condition (e.g., some_clouds).
-        - name: wind_speed
-          description: The wind speed of the forecast, recorded in km/h.
-        - name: snow
-          description: The amount of snow in the forecast, recorded in mm.
-        - name: rain
-          description: The amount of rain in the forecast, recorded in mm.
-        - name: max_temp
-          description: The maximum temp. in the forecast window, in Celsius.
-        - name: min_temp
-          description: The minimum temp. in the forecast window, in Celsius.
-        - name: chill
-          description: The chill in the forecast window, in Celsius.
-        - name: freezing_level
-          description: Elevation where the air temperature is 0 degrees Celsius.
-        - name: cloud_base
-          description: Lowest altitude of the visible portion of clouds, in m.
+      - name: fact_forecasts_key
+        description: >
+          Primary key for the table, made from the combination of columns mtn_name, elevation, 
+          local_time_issued, and local_time_of_forecast.
+      - name: geography_key
+        description: Foreign key to dim_geography, derived from mtn_name.
+      - name: sun_and_time_zone_key
+        description: Foreign key to dim_sun_and_time_zone, derived from mtn_name.
+      - name: topography_key
+        description: Foreign key to dim_topography, derived from mtn_name.
+      - name: mountaineering_key
+        description: Foreign key to dim_mountaineering, derived from mtn_name.
+      - name: mtn_name
+        description: Name of the mountain.
+      - name: elevation
+        description: Elevation on the mountain where the forecast is measured.
+      - name: mf_features_key
+        description: Foreign key to dim_mf_features, derived from mtn_name and elevation.
+      - name: time_of_scrape
+        description: Time when the web scrape to find weather data was run.
+      - name: local_time_issued
+        description: Time when the forecast was issued, in the local timezone of the mountain.
+      - name: forecast_status
+        description: >
+          Indicates whether the weather information relates to the weather that actually is occuring
+          (actual) or forecasted weather (forecast).
+      - name: local_time_of_forecast
+        description: >
+          This column translates the information in forecast_time_name and the corresponding date into
+          a proper timestamp, with AM meaning 7 AM on the listed day, PM meaning 3 PM, and night 
+          meaning 11 PM. These times were selected arbitrarily by the author.
+      - name: forecast_time_name
+        description: >
+          On weather-forecast.com, forecasts are divided into three slots on each day: AM, PM, 
+          and night (see forecast_time_name); this column records the label for each slot. 
+      - name: forecast_phrase
+        description: A string briefly describing the weather condition (e.g., some_clouds).
+      - name: wind_speed
+        description: The wind speed of the forecast, recorded in km/h.
+      - name: snow
+        description: The amount of snow in the forecast, recorded in mm.
+      - name: rain
+        description: The amount of rain in the forecast, recorded in mm.
+      - name: max_temp
+        description: The maximum temp. in the forecast window, in Celsius.
+      - name: min_temp
+        description: The minimum temp. in the forecast window, in Celsius.
+      - name: chill
+        description: The chill in the forecast window, in Celsius.
+      - name: freezing_level
+        description: Elevation where the air temperature is 0 degrees Celsius.
+      - name: cloud_base
+        description: Lowest altitude of the visible portion of clouds, in m.
 
   - name: dim_geography
     description:  >
@@ -74,23 +74,23 @@ models:
       region_group_key through the bridge_region_group bridge table, since some mountains lie
       on the border between two regions/countries, so this dimension is multivalued.
     columns:
-        - name: geography_key
-          description: Primary key, derived from mtn_name.
-        - name: mtn_name
-          description: Name of the mountain.
-        - name: region_group_key
-          description: >
-            References column of the same name in bridge_region_group, to indicate which group of regions 
-            (i.e., states/provinces of the relevant country) a particularmountain lies within. Of course 
-            some groups have only one region.
-        - name: mtn_range
-          description: Name of the range where the mountain is found, according to mountain-forecast.com.
-        - name: subrange
-          description: Name of the subrange where the mountain is found, according to mountain-forecast.com.
-        - name: latitude
-          description: Latitude coordinate of the mountain.
-        - name: longitude
-          description: Longitude coordinate of the mountain.
+      - name: geography_key
+        description: Primary key, derived from mtn_name.
+      - name: mtn_name
+        description: Name of the mountain.
+      - name: region_group_key
+        description: >
+          References column of the same name in bridge_region_group, to indicate which group of regions 
+          (i.e., states/provinces of the relevant country) a particularmountain lies within. Of course 
+          some groups have only one region.
+      - name: mtn_range
+        description: Name of the range where the mountain is found, according to mountain-forecast.com.
+      - name: subrange
+        description: Name of the subrange where the mountain is found, according to mountain-forecast.com.
+      - name: latitude
+        description: Latitude coordinate of the mountain.
+      - name: longitude
+        description: Longitude coordinate of the mountain.
 
   - name: bridge_region_group
     description: >
@@ -113,38 +113,38 @@ models:
       Continent and country where each region (meaning, state/province, subdivision of a 
       country, etc.) is found.
     columns:
-        - name: region_key
-          description: Primary key, based on the particular region.
-        - name: region
-          description: Name of the region.
-        - name: continent
-          description: Name of the continent where the region is found.
-        - name: country
-          description: Name of the country where the region is found.
+      - name: region_key
+        description: Primary key, based on the particular region.
+      - name: region
+        description: Name of the region.
+      - name: continent
+        description: Name of the continent where the region is found.
+      - name: country
+        description: Name of the country where the region is found.
 
   - name: dim_sun_and_time_zone
     description: >
       Contains timezone data for each mountain, as well as when the sun rises and sets on them each day.
       Data is scraped from timeanddate.com.
     columns:
-        - name: sun_and_time_zone_key
-          description: Primary key, derived from mtn_name.      
-        - name: mtn_name
-          description: Name of the mountain.
-        - name: time_zone
-          description: Name of the time zone where the mountain is located.
-        - name: utc_diff
-          description: Offset of the time zone relative to UTC.
-        - name: scrape_date
-          description: Local date at the mountain when the data was scraped.
-        - name: sunrise_time
-          description: Local time when the sun rises at the mountain on this date.
-        - name: sunset_time
-          description: Local time when the sun sets at the mountain on this date.
-        - name: total_daylight
-          description: >
-            Total amount of daylight on the mountain that day, calculated simply by the difference between 
-            the sunset_time and sunrise_time.
+      - name: sun_and_time_zone_key
+        description: Primary key, derived from mtn_name.      
+      - name: mtn_name
+        description: Name of the mountain.
+      - name: time_zone
+        description: Name of the time zone where the mountain is located.
+      - name: utc_diff
+        description: Offset of the time zone relative to UTC.
+      - name: scrape_date
+        description: Local date at the mountain when the data was scraped.
+      - name: sunrise_time
+        description: Local time when the sun rises at the mountain on this date.
+      - name: sunset_time
+        description: Local time when the sun sets at the mountain on this date.
+      - name: total_daylight
+        description: >
+          Total amount of daylight on the mountain that day, calculated simply by the difference between 
+          the sunset_time and sunrise_time.
 
   - name: dim_topography
     description: >
@@ -152,24 +152,41 @@ models:
       prominence and isolation, and where the mountain ranks in these categories in terms of
       all mountains in the world.
     columns:
-        - name: topography_key
-          description: Primary key, derived from mtn_name.  
-        - name: mtn_name
-          description: Name of the mountain.
-        - name: elevation
-          description: Height of the mountain's summit.
-        - name: elevation_rank
-          description: Rank of the peak in terms of the world's highest mountains.
-        - name: prominence
-          description: > 
-            Prominence of the mountain (see https://en.wikipedia.org/wiki/Topographic_prominence)
-        - name: prominence_rank
-          description: Rank of the peak in terms of the world's most prominent mountains.
-        - name: isolation
-          description: >
-            Isolation of the mountain (see https://en.wikipedia.org/wiki/Topographic_isolation)
-        - name: isolation_rank
-          description: Rank of the peak in terms of the world's most isolated mountains.
+      - name: topography_key
+        description: Primary key, derived from mtn_name.  
+      - name: mtn_name
+        description: Name of the mountain.
+      - name: elevation
+        description: >
+          Height of the mountain's summit, according to Wikipedia. Note that this number may
+          differ slightly from the peak listing on mountain-forecast.com.
+      - name: elevation_rank
+        description: Rank of the peak in terms of the world's highest mountains.
+      - name: prominence
+        description: > 
+          Prominence of the mountain (see https://en.wikipedia.org/wiki/Topographic_prominence)
+      - name: prominence_rank
+        description: Rank of the peak in terms of the world's most prominent mountains.
+      - name: isolation
+        description: >
+          Isolation of the mountain (see https://en.wikipedia.org/wiki/Topographic_isolation)
+      - name: isolation_rank
+        description: Rank of the peak in terms of the world's most isolated mountains.
+
+  - name: dim_mf_features
+    description: >
+      Contains information about the "mountain feature" at particular elevations according to 
+      mountain-forecast.com. These features are "peak", "mid", and "base", although not every
+      mountain has "mid". 
+    columns:
+      - name: mtn_name
+        description: Name of the mountain.
+      - name: elevation
+        description: Elevation, as listed on mountain-forecast.com.
+      - name: elevation_feature
+        description: >
+          Feature at the particular elevation for that mountain, either "peak", "mid", or "base",
+          according to mountain-forecast.com 
 
   - name: dim_mountaineering
     description: >

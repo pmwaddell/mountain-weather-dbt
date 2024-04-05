@@ -28,6 +28,12 @@ seeds:
       prominence and isolation, and where the mountain ranks in these categories in terms of
       all mountains in the world.
 
+  - name: dim_mf_features_seed
+    description: >
+      Contains information about the "mountain feature" at particular elevations according to 
+      mountain-forecast.com. These features are "peak", "mid", and "base", although not every
+      mountain has "mid". 
+
   - name: dim_mountaineering_seed
     description: >
       Information related to mountaineering exploits on each mountain. The data herein proved difficult

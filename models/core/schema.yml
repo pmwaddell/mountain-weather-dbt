@@ -122,7 +122,7 @@ models:
         - name: country
           description: Name of the country where the region is found.
 
-  - name: sun_and_time_zone
+  - name: dim_sun_and_time_zone
     description: >
       Contains timezone data for each mountain, as well as when the sun rises and sets on them each day.
       Data is scraped from timeanddate.com.

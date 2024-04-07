@@ -103,6 +103,7 @@ select
     g.longitude,
     z.time_zone,
     z.utc_diff,
+    f.sun_key,
     s.sunrise_time,
     s.sunset_time,
     s.total_daylight,
@@ -139,7 +140,7 @@ left join dim_geography
 left join dim_time_zone 
     as z on f.time_zone_key = z.time_zone_key 
 left join dim_sun
-    as s on f.time_zone_key = s.sun_key 
+    as s on f.sun_key = s.sun_key 
 left join dim_topography 
     as t on f.topography_key = t.topography_key
 left join dim_mountaineering 

@@ -122,12 +122,10 @@ models:
       - name: country
         description: Name of the country where the region is found.
 
-  - name: dim_sun_and_time_zone
-    description: >
-      Contains timezone data for each mountain, as well as when the sun rises and sets on them each day.
-      Data is scraped from timeanddate.com.
+  - name: dim_time_zone
+    description: Contains timezone data for each mountain.
     columns:
-      - name: sun_and_time_zone_key
+      - name: time_zone_key
         description: Primary key, derived from mtn_name.      
       - name: mtn_name
         description: Name of the mountain.
@@ -135,6 +133,16 @@ models:
         description: Name of the time zone where the mountain is located.
       - name: utc_diff
         description: Offset of the time zone relative to UTC.
+
+  - name: dim_sun
+    description: >
+      Contains data for when the sun rises and sets on each mountain each day.
+      Data is scraped from timeanddate.com.
+    columns:
+      - name: sun_key
+        description: Primary key, derived from mtn_name and scrape_date.      
+      - name: mtn_name
+        description: Name of the mountain.
       - name: scrape_date
         description: Local date at the mountain when the data was scraped.
       - name: sunrise_time

@@ -46,6 +46,8 @@ models:
             This column translates the information in forecast_time_name and the corresponding date into
             a proper timestamp, with AM meaning 7 AM on the listed day, PM meaning 3 PM, and night 
             meaning 11 PM. These times were selected arbitrarily by the author.
+        - name: local_date_of_forecast
+          description: Just the date part of the local_time_of_forecast field.
         - name: forecast_time_name
           description: >
             On weather-forecast.com, forecasts are divided into three slots on each day: AM, PM, 

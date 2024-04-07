@@ -10,6 +10,7 @@ renamed as (
         local_time_issued,
         forecast_status,
         local_time_of_forecast,
+        date_trunc(cast(local_time_of_forecast as timestamp), day) as local_date_of_forecast,
         forecast_time_name,
         forecast_phrase,
         wind_speed,

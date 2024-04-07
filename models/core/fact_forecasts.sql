@@ -133,7 +133,8 @@ from forecasts as f
 left join dim_geography 
     as g on f.geography_key = g.geography_key
 left join dim_sun_and_time_zone 
-    as s on f.sun_and_time_zone_key = s.sun_and_time_zone_key
+    as s on f.sun_and_time_zone_key = s.sun_and_time_zone_key 
+    and date_trunc(cast(f.local_time_of_forecast as timestamp), day) = date_trunc(cast(s.scrape_date as timestamp), day)
 left join dim_topography 
     as t on f.topography_key = t.topography_key
 left join dim_mountaineering 

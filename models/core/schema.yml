@@ -21,7 +21,6 @@ models:
             - local_time_of_forecast
 
     meta:
-      label: Forecasts Fact
       joins:
         - to: dim_customer
           type: left #inner, left, right, full; default 'inner'
@@ -156,6 +155,21 @@ models:
       - name: cloud_base
         data_type: numeric
         description: Lowest altitude of the visible portion of clouds, in m.
+
+      - name: air_pressure
+        data_type: numeric
+        description: >
+          Air pressure at the given elevation in units of atm, as calculated by the barometric formula 
+          (see https://en.wikipedia.org/wiki/Barometric_formula).
+
+      - name: p_o2
+        data_type: numeric
+        description: Partial pressure (in atm) of O2 at the given elevation, calc'd by 0.19 * air_pressure.
+
+      - name: in_death_zone
+        data_type: boo>
+          Flag for whether the elevation is considered to be in the "death zone", above 8000 m
+          (see https://en.wikipedia.org/wiki/Death_zone).
 
 
   - name: dim_geography

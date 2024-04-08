@@ -20,7 +20,8 @@ renamed as (
         min_temp,
         chill,
         freezing_level,
-        cloud_base
+        cloud_base,
+        round(exp(-0.000119 * elevation), 3) as air_pressure
     from source
 )
 

@@ -115,6 +115,12 @@ models:
           data_type: numeric
           description: Lowest altitude of the visible portion of clouds, in m.
 
+        - name: air_pressure
+          data_type: numeric
+          description: >
+            Air pressure at the given elevation in units of atm, as calculated by the barometric formula 
+            (see https://en.wikipedia.org/wiki/Barometric_formula).
+
 
   - name: stg_sun_and_time_zone
     description: >

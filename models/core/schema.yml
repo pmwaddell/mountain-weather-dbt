@@ -10,61 +10,153 @@ models:
       mountain on the site, and there are three cells per day: AM, PM, and night. 
       Here, the term forecast is often used loosely to mean any cell in this table, including the first 
       (or leftmost) time, which is assumed to correspond to actual weather events occuring at the mountain. 
-      Those cells with times in the future correspond to forecasted weather. 
+      Those cells with times in the future correspond to forecasted weather.
+
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - mtn_name
+            - elevation
+            - local_time_issued
+            - local_time_of_forecast
+
+    meta:
+      label: Forecasts Fact
+      joins:
+        - to: dim_customer
+          type: left #inner, left, right, full; default 'inner'
+          join_on:
+            - from_field: geography_key
+              to_field: geography_key
+
+      joins:
+        - to: dim_time_zone
+          type: left
+          join_on:
+            - from_field: time_zone_key
+              to_field: time_zone_key
+
+      joins:
+        - to: dim_sun
+          type: left
+          join_on:
+            - from_field: sun_key
+              to_field: sun_key
+
+      joins:
+        - to: dim_topography
+          type: left
+          join_on:
+            - from_field: topography_key
+              to_field: topography_key
+
+      joins:
+        - to: dim_mountaineering
+          type: left
+          join_on:
+            - from_field: mountaineering_key
+              to_field: mountaineering_key
+
+      joins:
+        - to: dim_mf_features
+          type: left
+          join_on:
+            - from_field: mf_features_key
+              to_field: mf_features_key    
+
     columns:
       - name: fact_forecasts_key
+        data_type: string
         description: >
           Primary key for the table, made from the combination of columns mtn_name, elevation, 
           local_time_issued, and local_time_of_forecast.
-      - name: geography_key
-        description: Foreign key to dim_geography, derived from mtn_name.
-      - name: sun_and_time_zone_key
-        description: Foreign key to dim_sun_and_time_zone, derived from mtn_name.
-      - name: topography_key
-        description: Foreign key to dim_topography, derived from mtn_name.
-      - name: mountaineering_key
-        description: Foreign key to dim_mountaineering, derived from mtn_name.
+        constraints:
+          - type: not_null
+          - type: primary_key
+
       - name: mtn_name
+        data_type: string      
         description: Name of the mountain.
+        constraints:
+          - type: not_null
+
       - name: elevation
+        data_type: int64
         description: Elevation on the mountain where the forecast is measured.
-      - name: mf_features_key
-        description: Foreign key to dim_mf_features, derived from mtn_name and elevation.
+        constraints:
+          - type: not_null
+
       - name: time_of_scrape
+        data_type: datetime
         description: Time when the web scrape to find weather data was run.
+        constraints:
+          - type: not_null
+
       - name: local_time_issued
+        data_type: datetime
         description: Time when the forecast was issued, in the local timezone of the mountain.
+        constraints:
+          - type: not_null
+
       - name: forecast_status
+        data_type: string
         description: >
           Indicates whether the weather information relates to the weather that actually is occuring
           (actual) or forecasted weather (forecast).
+        constraints:
+          - type: not_null
+
       - name: local_time_of_forecast
+        data_type: datetime
         description: >
           This column translates the information in forecast_time_name and the corresponding date into
           a proper timestamp, with AM meaning 7 AM on the listed day, PM meaning 3 PM, and night 
           meaning 11 PM. These times were selected arbitrarily by the author.
+        constraints:
+          - type: not_null
+
       - name: forecast_time_name
+        data_type: string
         description: >
           On weather-forecast.com, forecasts are divided into three slots on each day: AM, PM, 
-          and night (see forecast_time_name); this column records the label for each slot. 
+          and night (see forecast_time_name); this column records the label for each slot.
+
       - name: forecast_phrase
+        data_type: string
         description: A string briefly describing the weather condition (e.g., some_clouds).
+
       - name: wind_speed
+        data_type: int64
         description: The wind speed of the forecast, recorded in km/h.
+
       - name: snow
+        data_type: numeric
         description: The amount of snow in the forecast, recorded in mm.
+
       - name: rain
+        data_type: numeric
         description: The amount of rain in the forecast, recorded in mm.
+
       - name: max_temp
+        data_type: int64
         description: The maximum temp. in the forecast window, in Celsius.
+
       - name: min_temp
+        data_type: int64
         description: The minimum temp. in the forecast window, in Celsius.
+
       - name: chill
+        data_type: int64
         description: The chill in the forecast window, in Celsius.
+
       - name: freezing_level
+        data_type: int64
         description: Elevation where the air temperature is 0 degrees Celsius.
+
       - name: cloud_base
+        data_type: numeric
         description: Lowest altitude of the visible portion of clouds, in m.
+
 
   - name: dim_geography
     description:  >
@@ -73,24 +165,46 @@ models:
       state/province, etc.) it lies within. The region is related by the foreign key
       region_group_key through the bridge_region_group bridge table, since some mountains lie
       on the border between two regions/countries, so this dimension is multivalued.
+
     columns:
       - name: geography_key
+        data_type: string
         description: Primary key, derived from mtn_name.
+        constraints:
+          - type: not_null
+          - type: primary_key
+          
       - name: mtn_name
+        data_type: string
         description: Name of the mountain.
+        constraints:
+          - type: not_null
+
       - name: region_group_key
+        data_type: int64
         description: >
           References column of the same name in bridge_region_group, to indicate which group of regions 
           (i.e., states/provinces of the relevant country) a particularmountain lies within. Of course 
           some groups have only one region.
+        constraints:
+          - type: not_null
+          
       - name: mtn_range
+        data_type: string
         description: Name of the range where the mountain is found, according to mountain-forecast.com.
+
       - name: subrange
+        data_type: string
         description: Name of the subrange where the mountain is found, according to mountain-forecast.com.
+
       - name: latitude
+        data_type: numeric
         description: Latitude coordinate of the mountain.
+
       - name: longitude
+        data_type: numeric
         description: Longitude coordinate of the mountain.
+
 
   - name: bridge_region_group
     description: >
@@ -99,102 +213,195 @@ models:
       India, it is assigned a value of region_group_key in the dim_geography table which corresponds
       to the appropriate regions in both of these countries in this table, with weighting factors 
       of 0.5 each.
+
     columns:
       - name: region_group_key
+        data_type: int64
         description: Indicates the group of regions a mountain may be in.
+        constraints:
+          - type: not_null
+
       - name: region_key
+        data_type: int64
         description: >
           Foreign key to dim_region, indicating a particular region.
+        constraints:
+          - type: not_null
+          
       - name: weighting_factor
+        data_type: numeric
         description: Equal to 1 / (number of the group's rows), used to normalize calculations.
+
 
   - name: dim_region
     description: >
       Continent and country where each region (meaning, state/province, subdivision of a 
       country, etc.) is found.
+
     columns:
       - name: region_key
+        data_type: int64
         description: Primary key, based on the particular region.
+        constraints:
+          - type: not_null
+          - type: primary_key
+
       - name: region
+        data_type: string
         description: Name of the region.
+
       - name: continent
+        data_type: string
         description: Name of the continent where the region is found.
+
       - name: country
+        data_type: string
         description: Name of the country where the region is found.
+
 
   - name: dim_time_zone
     description: Contains timezone data for each mountain.
+
     columns:
       - name: time_zone_key
-        description: Primary key, derived from mtn_name.      
+        data_type: string
+        description: Primary key, derived from mtn_name.
+        constraints:
+          - type: not_null
+          - type: primary_key
+
       - name: mtn_name
+        data_type: string
         description: Name of the mountain.
+        constraints:
+          - type: not_null
+
       - name: time_zone
+        data_type: string
         description: Name of the time zone where the mountain is located.
+
       - name: utc_diff
+        data_type: string
         description: Offset of the time zone relative to UTC.
+
 
   - name: dim_sun
     description: >
       Contains data for when the sun rises and sets on each mountain each day.
       Data is scraped from timeanddate.com.
+
     columns:
       - name: sun_key
-        description: Primary key, derived from mtn_name and scrape_date.      
+        data_type: string
+        description: Primary key, derived from mtn_name and scrape_date.
+        constraints:
+          - type: not_null
+
       - name: mtn_name
+        data_type: string
         description: Name of the mountain.
+        constraints:
+          - type: not_null
+
       - name: scrape_date
+        data_type: datetime
         description: Local date at the mountain when the data was scraped.
+        constraints:
+          - type: not_null
+
       - name: sunrise_time
+        data_type: datetime
         description: Local time when the sun rises at the mountain on this date.
+
       - name: sunset_time
+        data_type: datetime
         description: Local time when the sun sets at the mountain on this date.
+
       - name: total_daylight
         description: >
           Total amount of daylight on the mountain that day, calculated simply by the difference between 
           the sunset_time and sunrise_time.
+
 
   - name: dim_topography
     description: >
       Information related to the topography of each mountain, such as elevation at the peak,
       prominence and isolation, and where the mountain ranks in these categories in terms of
       all mountains in the world.
+
     columns:
       - name: topography_key
-        description: Primary key, derived from mtn_name.  
+        data_type: string
+        description: Primary key, derived from mtn_name.
+        constraints:
+          - type: not_null
+          - type: primary_key
+
       - name: mtn_name
+        data_type: string
         description: Name of the mountain.
+        constraints:
+          - type: not_null
+
       - name: elevation
+        data_type: int64
         description: >
           Height of the mountain's summit, according to Wikipedia. Note that this number may
           differ slightly from the peak listing on mountain-forecast.com.
+
       - name: elevation_rank
+        data_type: int64
         description: Rank of the peak in terms of the world's highest mountains.
+
       - name: prominence
+        data_type: int64
         description: > 
           Prominence of the mountain (see https://en.wikipedia.org/wiki/Topographic_prominence)
+
       - name: prominence_rank
+        data_type: int64
         description: Rank of the peak in terms of the world's most prominent mountains.
+
       - name: isolation
+        data_type: int64
         description: >
           Isolation of the mountain (see https://en.wikipedia.org/wiki/Topographic_isolation)
+
       - name: isolation_rank
+        data_type: int64
         description: Rank of the peak in terms of the world's most isolated mountains.
+
 
   - name: dim_mf_features
     description: >
       Contains information about the "mountain feature" at particular elevations according to 
       mountain-forecast.com. These features are "peak", "mid", and "base", although not every
       mountain has "mid". 
+
     columns:
+      - name: mf_features_key
+        data_type: string
+        description: Primary key, derived from mtn_name.
+        constraints:
+          - type: not_null
+          - type: primary_key
+
       - name: mtn_name
+        data_type: string
         description: Name of the mountain.
+        constraints:
+          - type: not_null
+
       - name: elevation
+        data_type: int64
         description: Elevation, as listed on mountain-forecast.com.
+
       - name: elevation_feature
+        data_type: string
         description: >
           Feature at the particular elevation for that mountain, either "peak", "mid", or "base",
           according to mountain-forecast.com 
+
 
   - name: dim_mountaineering
     description: >
@@ -209,16 +416,33 @@ models:
       Flattop and Mount Whitney were estimated based on google searches, and are probably not very 
       reliable. Apparently there have actually been no deaths on Mount Vinson, or at least very few, so 
       I left the number at 0. Where I couldn't even really estimate the numbers I left the field blank.
+
     columns:
       - name: mountaineering_key
-        description: Primary key, derived from mtn_name.  
+        data_type: string
+        description: Primary key, derived from mtn_name.
+        constraints:
+          - type: not_null
+          - type: primary_key
+
       - name: mtn_name
+        data_type: string
         description: Name of the mountain.
+        constraints:
+          - type: not_null
+          
       - name: first_ascent
+        data_type: int64
         description: Year of the first ascent of the mountain.
+
       - name: ascents
+        data_type: int64
         description: Total ascents of the mountain, as close as I was able to determine.
+
       - name: fatalities
+        data_type: int64
         description: Total fatalities of the mountain, as close as I was able to determine.
+
       - name: fatalities_per_summit_rate
+        data_type: numeric
         description: Rate of fatalities per successful ascents, or 100 * (total ascents / total fatalities).

@@ -68,15 +68,15 @@ forecasts as (
             dbt_utils.generate_surrogate_key(
                 ['mtn_name', 'elevation', 'local_time_issued', 'local_time_of_forecast']
             )
-        }} fact_forecasts_key,
-        {{ dbt_utils.generate_surrogate_key(['mtn_name']) }} geography_key,
-        {{ dbt_utils.generate_surrogate_key(['mtn_name']) }} time_zone_key,
-        {{ dbt_utils.generate_surrogate_key(['mtn_name', 'local_date_of_forecast']) }} sun_key,
-        {{ dbt_utils.generate_surrogate_key(['mtn_name']) }} topography_key,
-        {{ dbt_utils.generate_surrogate_key(['mtn_name']) }} mountaineering_key,
+        }} as fact_forecasts_key,
+        {{ dbt_utils.generate_surrogate_key(['mtn_name']) }} as geography_key,
+        {{ dbt_utils.generate_surrogate_key(['mtn_name']) }} as time_zone_key,
+        {{ dbt_utils.generate_surrogate_key(['mtn_name', 'local_date_of_forecast']) }} as sun_key,
+        {{ dbt_utils.generate_surrogate_key(['mtn_name']) }} as topography_key,
+        {{ dbt_utils.generate_surrogate_key(['mtn_name']) }} as mountaineering_key,
         mtn_name,
         elevation,
-        {{ dbt_utils.generate_surrogate_key(['mtn_name', 'elevation']) }} mf_features_key,
+        {{ dbt_utils.generate_surrogate_key(['mtn_name', 'elevation']) }} as mf_features_key,
         time_of_scrape,
         local_time_issued,
         forecast_status,
@@ -95,13 +95,13 @@ forecasts as (
 )
 
 select
+    f.fact_forecasts_key,
     f.mtn_name,
     g.region_group_key,
     g.mtn_range,
     g.subrange,
     g.latitude,
     g.longitude,
-    z.time_zone_key,
     z.time_zone,
     z.utc_diff,
     s.sunrise_time,

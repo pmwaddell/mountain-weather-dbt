@@ -6,7 +6,7 @@
 
 
 select
-    {{ dbt_utils.generate_surrogate_key(['mtn_name', 'scrape_date']) }} sun_key,
+    {{ dbt_utils.generate_surrogate_key(['mtn_name', 'scrape_date']) }} as sun_key,
     mtn_name,
     scrape_date,
     sunrise_time,

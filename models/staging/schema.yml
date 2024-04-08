@@ -15,6 +15,7 @@ sources:
     tables:
       - name: sun_and_time_zone_data
     
+
 models:
   - name: stg_forecasts
     description: >
@@ -28,64 +29,120 @@ models:
       Those cells with times in the future correspond to forecasted weather. 
     columns:
         - name: mtn_name
+          data_type: string
           description: Name of the mountain.
+          constraints:
+            - type: not_null
+
         - name: elevation
+          data_type: int64
           description: Elevation on the mountain where the forecast is measured.
-        - name: elev_feature
-          description: Identifies mountain feature at an elevation, either base, mid or peak.
+          constraints:
+            - type: not_null
+
         - name: time_of_scrape
+          data_type: datetime
           description: Time when the web scrape to find weather data was run.
+          constraints:
+            - type: not_null
+
         - name: local_time_issued
+          data_type: datetime
           description: Time when the forecast was issued, in the local timezone of the mountain.
+          constraints:
+            - type: not_null
+
         - name: forecast_status
+          data_type: string
           description: >
             Indicates whether the weather information relates to the weather that actually is occuring
             (actual) or forecasted weather (forecast).
+          constraints:
+            - type: not_null
+        
         - name: local_time_of_forecast
+          data_type: datetime
           description: >
             This column translates the information in forecast_time_name and the corresponding date into
             a proper timestamp, with AM meaning 7 AM on the listed day, PM meaning 3 PM, and night 
             meaning 11 PM. These times were selected arbitrarily by the author.
+          constraints:
+            - type: not_null
+
         - name: local_date_of_forecast
+          data_type: date
           description: Just the date part of the local_time_of_forecast field.
+
         - name: forecast_time_name
+          data_type: string
           description: >
             On weather-forecast.com, forecasts are divided into three slots on each day: AM, PM, 
-            and night (see forecast_time_name); this column records the label for each slot. 
+            and night (see forecast_time_name); this column records the label for each slot.
+
         - name: forecast_phrase
+          data_type: string
           description: A string briefly describing the weather condition (e.g., some_clouds).
+
         - name: wind_speed
+          data_type: int
           description: The wind speed of the forecast, recorded in km/h.
+
         - name: snow
+          data_type: numeric
           description: The amount of snow in the forecast, recorded in mm.
+
         - name: rain
+          data_type: numeric
           description: The amount of rain in the forecast, recorded in mm.
+
         - name: max_temp
+          data_type: int64
           description: The maximum temp. in the forecast window, in Celsius.
+
         - name: min_temp
+          data_type: int64
           description: The minimum temp. in the forecast window, in Celsius.
+
         - name: chill
+          data_type: int64
           description: The chill in the forecast window, in Celsius.
+
         - name: freezing_level
+          data_type: int64
           description: Elevation where the air temperature is 0 degrees Celsius.
+
         - name: cloud_base
+          data_type: numeric
           description: Lowest altitude of the visible portion of clouds, in m.
 
-models:
+
   - name: stg_sun_and_time_zone
     description: >
       Contains timezone data for each mountain, as well as when the sun rises and sets on them each day.
       Data is scraped from timeanddate.com.
     columns:
         - name: mtn_name
+          data_type: string
           description: Name of the mountain.
+          constraints:
+            - type: not_null
+
         - name: time_zone
+          data_type: string
           description: Name of the time zone where the mountain is located.
+
         - name: utc_diff
+          data_type: string
           description: Offset of the time zone relative to UTC.
+
         - name: scrape_date
+          data_type: date
           description: Local date at the mountain when the data was scraped.
+
         - name: sunrise_time
+          data_type: datetime
           description: Local time when the sun rises at the mountain on this date.
+
         - name: sunset_time
+          data_type: datetime
           description: Local time when the sun sets at the mountain on this date.

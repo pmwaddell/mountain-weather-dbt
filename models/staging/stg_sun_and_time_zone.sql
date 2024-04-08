@@ -7,9 +7,9 @@ renamed as (
         mtn_name,
         time_zone,
         utc_diff,
-        date_trunc(cast(scrape_date as timestamp), day) as scrape_date,
-        sunrise_time,
-        sunset_time
+        date_trunc(cast(scrape_date as date), day) as scrape_date,
+        cast(sunrise_time as datetime) as sunrise_time,
+        cast(sunset_time as datetime) as sunset_time
     from source
 )
 

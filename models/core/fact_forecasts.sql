@@ -36,7 +36,7 @@ dim_sun as (
 dim_topography as (
     select
         topography_key,
-        elevation as wiki_elevation,
+        elevation as wiki_peak_elevation,
         elevation_rank,
         prominence,
         prominence_rank,
@@ -90,7 +90,8 @@ forecasts as (
         min_temp,
         chill,
         freezing_level,
-        cloud_base
+        cloud_base,
+        air_pressure
     from {{ ref("stg_forecasts") }}
 )
 
@@ -107,7 +108,7 @@ select
     s.sunrise_time,
     s.sunset_time,
     s.total_daylight,
-    t.wiki_elevation,
+    t.wiki_peak_elevation,
     t.elevation_rank,
     t.prominence,
     t.prominence_rank,
@@ -132,7 +133,10 @@ select
     f.min_temp,
     f.chill,
     f.freezing_level,
-    f.cloud_base
+    f.cloud_base,
+    f.air_pressure,
+    round(0.19 * f.air_pressure, 3) as p_o2,
+    f.elevation >= 8000 as in_death_zone
 from forecasts as f
 
 left join dim_geography 

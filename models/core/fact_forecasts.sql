@@ -11,7 +11,8 @@ with dim_geography as (
         mtn_range,
         subrange,
         latitude,
-        longitude
+        longitude,
+        concat(latitude , ",", longitude) AS geo_dimension
     from {{ ref("dim_geography") }}
 ),
 
@@ -103,6 +104,7 @@ select
     g.subrange,
     g.latitude,
     g.longitude,
+    g.geo_dimension,
     z.time_zone,
     z.utc_diff,
     s.sunrise_time,

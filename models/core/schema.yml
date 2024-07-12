@@ -219,6 +219,10 @@ models:
         data_type: numeric
         description: Longitude coordinate of the mountain.
 
+      - name: geo_dimension
+        data_type: string
+        description: Field used for making geographic plots in Looker; a string of '{latitude},{longitude}'.
+
 
   - name: bridge_region_group
     description: >

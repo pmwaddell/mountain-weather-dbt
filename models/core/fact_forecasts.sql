@@ -149,7 +149,7 @@ left join dim_sun
     as s on f.sun_key = s.sun_key 
 left join dim_topography 
     as t on f.topography_key = t.topography_key
-left join dim_mountaineering 
+left join dim_mountaineering
     as m on f.mountaineering_key = m.mountaineering_key
-left join dim_mf_features 
+left join dim_mf_features
     as feat on f.mf_features_key = feat.mf_features_key

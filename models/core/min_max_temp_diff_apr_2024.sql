@@ -38,7 +38,9 @@ forecasts as (
         local_time_of_forecast,
         forecast_time_name,
         wind_speed,
-        chill,
+        max_temp,
+        min_temp,
+        chill
     from {{ ref("stg_forecasts") }}
 )
 
@@ -54,8 +56,9 @@ select
     g.geo_dimension,
     f.elevation,
     feat.elevation_feature,
-    round(avg(f.chill), 2) as avg_chill,
-    round(avg(f.wind_speed), 2) as avg_wind_speed
+    f.forecast_time_name,
+    round(avg(f.max_temp) - avg(f.min_temp), 2) as min_max_temp_diff
+    -- round(avg(f.wind_speed), 2) as avg_wind_speed
 from forecasts as f
 
 left join dim_geography 
@@ -65,11 +68,10 @@ left join dim_mf_features
 
 where 
     f.forecast_status = 'actual' and
-    f.forecast_time_name = 'am' and
-    {{ dbt_date.date_part("month", "f.local_time_of_forecast") }} = 6 and
+    {{ dbt_date.date_part("month", "f.local_time_of_forecast") }} = 4 and
     {{ dbt_date.date_part("year", "f.local_time_of_forecast") }} = 2024
 group by
-    f.mtn_name,
+    f.mtn_name, 
     g.region_group_key,
     g.mtn_range,
     g.subrange,
@@ -77,4 +79,5 @@ group by
     g.longitude,
     g.geo_dimension,
     f.elevation,
-    feat.elevation_feature
+    feat.elevation_feature,
+    f.forecast_time_name

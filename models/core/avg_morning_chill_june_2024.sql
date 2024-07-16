@@ -65,7 +65,7 @@ select
     f.elevation,
     feat.elevation_feature,
     round(avg(f.chill), 2) as avg_chill,
-    round(avg(f.wind_speed), 2) as avg_windspeed
+    round(avg(f.wind_speed), 2) as avg_wind_speed
 from forecasts as f
 
 left join dim_geography 

@@ -34,31 +34,47 @@ forecasts as (
         mtn_name,
         elevation,
         {{ dbt_utils.generate_surrogate_key(['mtn_name', 'elevation']) }} as mf_features_key,
+        time_of_scrape,
+        local_time_issued,
         forecast_status,
         local_time_of_forecast,
         forecast_time_name,
+        forecast_phrase, 
         wind_speed,
+        snow,
+        rain,
         max_temp,
         min_temp,
-        chill
+        chill,
+        freezing_level,
+        cloud_base,
+        air_pressure
     from {{ ref("stg_forecasts") }}
 )
 
 select
+    f.fact_forecasts_key,
     f.mtn_name,
     g.region_group_key,
     g.mtn_range,
     g.subrange,
     g.latitude,
-    abs(g.latitude) as abs_latitude,
     g.longitude,
-    abs(g.longitude) as abs_longitude,
     g.geo_dimension,
     f.elevation,
     feat.elevation_feature,
+    f.time_of_scrape,
+    f.local_time_issued,
+    f.forecast_status,
+    f.local_time_of_forecast,
     f.forecast_time_name,
-    round(avg(f.max_temp) - avg(f.min_temp), 2) as min_max_temp_diff,
-    round(avg(f.wind_speed), 2) as avg_wind_speed
+    f.forecast_phrase,
+    f.wind_speed,
+    f.snow,
+    f.rain,
+    f.max_temp,
+    f.min_temp,
+    f.chill
 from forecasts as f
 
 left join dim_geography 
@@ -70,14 +86,3 @@ where
     f.forecast_status = 'actual' and
     {{ dbt_date.date_part("month", "f.local_time_of_forecast") }} = 4 and
     {{ dbt_date.date_part("year", "f.local_time_of_forecast") }} = 2024
-group by
-    f.mtn_name, 
-    g.region_group_key,
-    g.mtn_range,
-    g.subrange,
-    g.latitude,
-    g.longitude,
-    g.geo_dimension,
-    f.elevation,
-    feat.elevation_feature,
-    f.forecast_time_name

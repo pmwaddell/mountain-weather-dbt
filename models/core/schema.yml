@@ -22,41 +22,36 @@ models:
 
     meta:
       joins:
-        - to: dim_customer
-          type: left #inner, left, right, full; default 'inner'
+        - to: dim_geography
+          type: left
           join_on:
             - from_field: geography_key
               to_field: geography_key
 
-      joins:
         - to: dim_time_zone
           type: left
           join_on:
             - from_field: time_zone_key
               to_field: time_zone_key
 
-      joins:
         - to: dim_sun
           type: left
           join_on:
             - from_field: sun_key
               to_field: sun_key
 
-      joins:
         - to: dim_topography
           type: left
           join_on:
             - from_field: topography_key
               to_field: topography_key
 
-      joins:
         - to: dim_mountaineering
           type: left
           join_on:
             - from_field: mountaineering_key
               to_field: mountaineering_key
 
-      joins:
         - to: dim_mf_features
           type: left
           join_on:
@@ -170,6 +165,65 @@ models:
         data_type: boo>
           Flag for whether the elevation is considered to be in the "death zone", above 8000 m
           (see https://en.wikipedia.org/wiki/Death_zone).
+
+  
+  - name: avg_morning_chill_june_2024
+    description: >
+      Model which computes the (actual) average chill in the morning for each mountain at each elevation, 
+      restricted to June 2024.
+
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - mtn_name
+            - elevation
+
+    meta:
+      joins:
+        - to: dim_geography
+          type: left
+          join_on:
+            - from_field: geography_key
+              to_field: geography_key
+
+        - to: dim_mf_features
+          type: left
+          join_on:
+            - from_field: mf_features_key
+              to_field: mf_features_key    
+
+    columns:
+      - name: mtn_name
+        data_type: string      
+        description: Name of the mountain.
+        constraints:
+          - type: not_null
+
+      - name: abs_latitude
+        data_type: numeric      
+        description: Absolute value of the mountain's latitude, from dim_geography.
+        constraints:
+          - type: not_null
+
+      - name: abs_longitude
+        data_type: numeric      
+        description: Absolute value of the mountain's longitude, from dim_geography.
+        constraints:
+          - type: not_null
+
+      - name: elevation
+        data_type: int64
+        description: Elevation on the mountain where the forecast is measured.
+        constraints:
+          - type: not_null
+
+      - name: avg_wind_speed
+        data_type: int64
+        description: The average wind speed in June 2024, recorded in km/h.
+
+      - name: avg_chill
+        data_type: int64
+        description: The chill in June 2024, in Celsius.
 
 
   - name: dim_geography

@@ -40,6 +40,11 @@ forecasts as (
         wind_speed,
         chill,
     from {{ ref("stg_forecasts") }}
+    where 
+        forecast_status = 'actual' and
+        forecast_time_name = 'am' and
+        {{ dbt_date.date_part("month", "local_time_of_forecast") }} = 6 and
+        {{ dbt_date.date_part("year", "local_time_of_forecast") }} = 2024
 )
 
 select
@@ -63,11 +68,7 @@ left join dim_geography
 left join dim_mf_features
     as feat on f.mf_features_key = feat.mf_features_key
 
-where 
-    f.forecast_status = 'actual' and
-    f.forecast_time_name = 'am' and
-    {{ dbt_date.date_part("month", "f.local_time_of_forecast") }} = 6 and
-    {{ dbt_date.date_part("year", "f.local_time_of_forecast") }} = 2024
+
 group by
     f.mtn_name,
     g.region_group_key,

@@ -57,9 +57,6 @@ forecasts as (
         cloud_base,
         air_pressure
     from {{ ref("stg_forecasts") }}
-    where 
-        {{ dbt_date.date_part("month", "local_time_of_forecast") }} = 4 and
-        {{ dbt_date.date_part("year", "local_time_of_forecast") }} = 2024
 ),
 
 forecasts_one_actual as (
@@ -123,6 +120,10 @@ left join forecasts_for_join as f2
     on f.local_time_of_forecast = f2.local_time_of_forecast
     and f.mtn_name = f2.mtn_name
     and f.elevation = f2.elevation
+
+where 
+    {{ dbt_date.date_part("month", "f.local_time_of_forecast") }} = 5 and
+    {{ dbt_date.date_part("year", "f.local_time_of_forecast") }} = 2024
 
 -- for debugging:
 -- where f.mtn_name = 'mont_blanc' and f.elevation = 4000

@@ -85,7 +85,8 @@ select
     f.time_of_scrape,
     f.local_time_issued,
     f.local_time_of_forecast,
-    f.local_time_of_forecast - f.local_time_issued as time_diff,
+    extract(day from (f.local_time_of_forecast - f.local_time_issued)) * 24 +
+    extract(hour from (f.local_time_of_forecast - f.local_time_issued)) as time_diff_hours,
     f.forecast_time_name,
     f.forecast_status,
     f.forecast_phrase,

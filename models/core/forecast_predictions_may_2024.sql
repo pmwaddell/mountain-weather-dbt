@@ -59,8 +59,8 @@ forecasts as (
     from {{ ref("stg_forecasts") }}
 ),
 
--- often, two "actual" rows will be present for a single forecast time
--- in this case, I retain the one with the later issued date (time_rank = 1)
+-- Often, two "actual" rows will be present for a single forecast time
+-- In this case, I retain the one with the later issued date (time_rank = 1)
 forecasts_one_actual as (
     select * from forecasts
     where forecast_status = 'forecast' or time_rank = 1
@@ -90,16 +90,16 @@ select
     f.forecast_phrase,
     f.wind_speed,
     f2.wind_speed AS actual_wind_speed,
-    f.wind_speed - f2.wind_speed as wind_speed_diff,
-    abs(f.wind_speed - f2.wind_speed) as abs_wind_speed_diff,
+    round(f.wind_speed - f2.wind_speed, 1) as wind_speed_diff,
+    round(abs(f.wind_speed - f2.wind_speed), 1) as abs_wind_speed_diff,
     f.snow,
     f2.snow AS actual_snow,
-    f.snow - f2.snow as snow_diff,
-    abs(f.snow - f2.snow) as abs_snow_diff,
+    round(f.snow - f2.snow, 1) as snow_diff,
+    round(abs(f.snow - f2.snow), 1) as abs_snow_diff,
     f.rain,
     f2.rain AS actual_rain,
-    f.rain - f2.rain as rain_diff,
-    abs(f.rain - f2.rain) as abs_rain_diff,
+    round(f.rain - f2.rain, 1) as rain_diff,
+    round(abs(f.rain - f2.rain), 1) as abs_rain_diff,
     f.max_temp,
     f2.max_temp AS actual_max_temp,
     f.max_temp - f2.max_temp as max_temp_diff,
@@ -114,20 +114,21 @@ select
     abs(f.chill - f2.chill) as abs_chill_diff
 from forecasts_one_actual as f
 
-left join dim_geography 
-    as g on f.geography_key = g.geography_key
-left join dim_mf_features
-    as feat on f.mf_features_key = feat.mf_features_key
-left join forecasts_for_join as f2
-    on f.local_time_of_forecast = f2.local_time_of_forecast
-    and f.mtn_name = f2.mtn_name
-    and f.elevation = f2.elevation
+left join dim_geography as g on
+    f.geography_key = g.geography_key
+left join dim_mf_features as feat on
+    f.mf_features_key = feat.mf_features_key
+inner join forecasts_for_join as f2 on
+    f.local_time_of_forecast = f2.local_time_of_forecast and
+    f.mtn_name = f2.mtn_name and
+    f.elevation = f2.elevation
 
-where 
+where
     {{ dbt_date.date_part("month", "f.local_time_of_forecast") }} = 5 and
     {{ dbt_date.date_part("year", "f.local_time_of_forecast") }} = 2024
 
--- for debugging:
+
+-- For debugging:
 -- where f.mtn_name = 'mont_blanc' and f.elevation = 4000
 -- and f.local_time_of_forecast = '2024-04-09T07:00:00'
 -- order by f.forecast_status ASC, f.local_time_issued DESC

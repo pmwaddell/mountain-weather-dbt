@@ -82,6 +82,13 @@ forecasts as (
         local_time_issued,
         forecast_status,
         local_time_of_forecast,
+        RANK() OVER (
+            PARTITION BY
+                mtn_name,
+                elevation, 
+                local_time_of_forecast
+            ORDER BY local_time_issued DESC
+        ) AS time_rank,
         forecast_time_name,
         forecast_phrase, 
         wind_speed,
@@ -94,79 +101,66 @@ forecasts as (
         cloud_base,
         air_pressure
     from {{ ref("stg_forecasts") }}
-),
-
-time_ranked_forecasts as (
-    select
-        f.fact_forecasts_key,
-        f.mtn_name,
-        g.region_group_key,
-        g.mtn_range,
-        g.subrange,
-        g.latitude,
-        g.longitude,
-        g.geo_dimension,
-        z.time_zone,
-        z.utc_diff,
-        s.sunrise_time,
-        s.sunset_time,
-        s.total_daylight,
-        t.wiki_peak_elevation,
-        t.elevation_rank,
-        t.prominence,
-        t.prominence_rank,
-        t.isolation,
-        t.isolation_rank,
-        m.first_ascent,
-        m.ascents,
-        m.fatalities,
-        m.fatalities_per_summit_rate,
-        f.elevation,
-        feat.elevation_feature,
-        f.time_of_scrape,
-        f.local_time_issued,
-        f.forecast_status,
-        f.local_time_of_forecast,
-        RANK() OVER (
-            PARTITION BY
-                f.mtn_name,
-                f.elevation, 
-                f.local_time_of_forecast
-            ORDER BY f.local_time_issued DESC
-            ) AS time_rank,
-        f.forecast_time_name,
-        f.forecast_phrase, 
-        f.wind_speed,
-        f.snow,
-        f.rain,
-        f.max_temp,
-        f.min_temp,
-        f.chill,
-        f.freezing_level,
-        f.cloud_base,
-        f.air_pressure,
-        round(0.19 * f.air_pressure, 3) as p_o2,
-        f.elevation >= 8000 as in_death_zone
-    from forecasts as f
-
-    left join dim_geography 
-        as g on f.geography_key = g.geography_key
-    left join dim_time_zone 
-        as z on f.time_zone_key = z.time_zone_key 
-    left join dim_sun
-        as s on f.sun_key = s.sun_key 
-    left join dim_topography 
-        as t on f.topography_key = t.topography_key
-    left join dim_mountaineering
-        as m on f.mountaineering_key = m.mountaineering_key
-    left join dim_mf_features
-        as feat on f.mf_features_key = feat.mf_features_key
-
-    where 
-        f.forecast_status = 'actual'
 )
 
 select
-    *
-from time_ranked_forecasts
-where time_rank = 1
+    f.fact_forecasts_key,
+    f.mtn_name,
+    g.region_group_key,
+    g.mtn_range,
+    g.subrange,
+    g.latitude,
+    g.longitude,
+    g.geo_dimension,
+    z.time_zone,
+    z.utc_diff,
+    s.sunrise_time,
+    s.sunset_time,
+    s.total_daylight,
+    t.wiki_peak_elevation,
+    t.elevation_rank,
+    t.prominence,
+    t.prominence_rank,
+    t.isolation,
+    t.isolation_rank,
+    m.first_ascent,
+    m.ascents,
+    m.fatalities,
+    m.fatalities_per_summit_rate,
+    f.elevation,
+    feat.elevation_feature,
+    f.time_of_scrape,
+    f.local_time_issued,
+    f.forecast_status,
+    f.local_time_of_forecast,
+    f.forecast_time_name,
+    f.forecast_phrase, 
+    f.wind_speed,
+    f.snow,
+    f.rain,
+    f.max_temp,
+    f.min_temp,
+    f.chill,
+    f.freezing_level,
+    f.cloud_base,
+    f.air_pressure,
+    round(0.19 * f.air_pressure, 3) as p_o2,
+    f.elevation >= 8000 as in_death_zone
+from forecasts as f
+
+left join dim_geography 
+    as g on f.geography_key = g.geography_key
+left join dim_time_zone 
+    as z on f.time_zone_key = z.time_zone_key 
+left join dim_sun
+    as s on f.sun_key = s.sun_key 
+left join dim_topography 
+    as t on f.topography_key = t.topography_key
+left join dim_mountaineering
+    as m on f.mountaineering_key = m.mountaineering_key
+left join dim_mf_features
+    as feat on f.mf_features_key = feat.mf_features_key
+
+where 
+    f.forecast_status = 'actual' and
+    f.time_rank = 1

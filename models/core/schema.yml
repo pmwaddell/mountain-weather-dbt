@@ -125,7 +125,7 @@ models:
 
       - name: snow
         data_type: numeric
-        description: The amount of snow in the forecast, recorded in mm.
+        description: The amount of snow in the forecast, recorded in cm.
 
       - name: rain
         data_type: numeric
@@ -167,6 +167,8 @@ models:
           (see https://en.wikipedia.org/wiki/Death_zone).
 
   
+
+
   - name: avg_morning_chill_june_2024
     description: >
       Model which computes the (actual) average chill in the morning for each mountain at each elevation, 
@@ -226,6 +228,224 @@ models:
         description: The chill in June 2024, in Celsius.
 
 
+
+
+  - name: min_max_temp_diff_apr_2024
+    description: >
+      Model which determines the difference between the average min. and max. temps for
+      for April 2024, grouped by mountain, elevation, and forecast time name (i.e. morning,
+      afternoon and night).
+
+    meta:
+      joins:
+        - to: dim_geography
+          type: left
+          join_on:
+            - from_field: geography_key
+              to_field: geography_key
+
+        - to: dim_mf_features
+          type: left
+          join_on:
+            - from_field: mf_features_key
+              to_field: mf_features_key    
+
+    columns:
+      - name: mtn_name
+        data_type: string      
+        description: Name of the mountain.
+        constraints:
+          - type: not_null
+
+      - name: elevation
+        data_type: int64
+        description: Elevation on the mountain where the forecast is measured.
+        constraints:
+          - type: not_null
+
+      - name: forecast_time_name
+        data_type: string
+        description: >
+          On weather-forecast.com, forecasts are divided into three slots on each day: AM, PM, 
+          and night (see forecast_time_name); this column records the label for each slot.
+      
+      - name: min_max_temp_diff
+        data_type: numeric
+        description: Difference between the average min. and average max. temp. 
+
+
+
+
+  - name: forecast_predictions_may_2024
+    description: >
+      Model which determines the difference between forecasted weather data and the
+      actual observed weather, as a function of time between the forecast and the event.
+
+    meta:
+      joins:
+        - to: dim_geography
+          type: left
+          join_on:
+            - from_field: geography_key
+              to_field: geography_key
+
+        - to: dim_mf_features
+          type: left
+          join_on:
+            - from_field: mf_features_key
+              to_field: mf_features_key    
+
+    columns:
+      - name: mtn_name
+        data_type: string      
+        description: Name of the mountain.
+        constraints:
+          - type: not_null
+
+      - name: elevation
+        data_type: int64
+        description: Elevation on the mountain where the forecast is measured.
+        constraints:
+          - type: not_null
+
+      - name: time_of_scrape
+        data_type: datetime
+        description: Time when the web scrape to find weather data was run.
+        constraints:
+          - type: not_null
+
+      - name: local_time_issued
+        data_type: datetime
+        description: Time when the forecast was issued, in the local timezone of the mountain.
+        constraints:
+          - type: not_null
+
+      - name: forecast_status
+        data_type: string
+        description: >
+          Indicates whether the weather information relates to the weather that actually is occuring 
+          (actual) or forecasted weather (forecast).
+        constraints:
+          - type: not_null
+
+      - name: local_time_of_forecast
+        data_type: datetime
+        description: >
+          This column translates the information in forecast_time_name and the corresponding date into 
+          a proper timestamp, with AM meaning 7 AM on the listed day, PM meaning 3 PM, and night 
+          meaning 11 PM. These times were selected arbitrarily by the author.
+        constraints:
+          - type: not_null
+
+      - name: forecast_time_name
+        data_type: string
+        description: >
+          On weather-forecast.com, forecasts are divided into three slots on each day: AM, PM, 
+          and night (see forecast_time_name); this column records the label for each slot.
+
+      - name: forecast_phrase
+        data_type: string
+        description: A string briefly describing the weather condition (e.g., some_clouds).
+
+      - name: wind_speed
+        data_type: int64
+        description: The wind speed of the forecast, recorded in km/h.
+
+      - name: actual_wind_speed
+        data_type: int64
+        description: The actual wind speed that occured at the forecast time, recorded in km/h.
+
+      - name: wind_speed_diff
+        data_type: int64
+        description: Difference between the forecasted wind speed and actual wind speed, in km/h.
+
+      - name: abs_wind_speed_diff
+        data_type: int64
+        description: Absolute value of wind_speed_diff.
+
+      - name: snow
+        data_type: numeric
+        description: The amount of snow in the forecast, recorded in cm.
+
+      - name: actual_snow
+        data_type: numeric
+        description: The actual amount of snow that occured at the forecast time, recorded in cm.
+
+      - name: snow_diff
+        data_type: numeric
+        description: Difference between the forecasted snow and actual snow, in cm.
+
+      - name: abs_snow_diff
+        data_type: numeric
+        description: Absolute value of snow_diff.
+
+      - name: rain
+        data_type: numeric
+        description: The amount of snow in the forecast, recorded in mm.
+
+      - name: actual_rain
+        data_type: numeric
+        description: The actual amount of rain that occured at the forecast time, recorded in mm.
+
+      - name: rain_diff
+        data_type: numeric
+        description: Difference between the forecasted rain and actual rain, in mm.
+
+      - name: abs_rain_diff
+        data_type: numeric
+        description: Absolute value of rain_diff.
+
+      - name: max_temp
+        data_type: int64
+        description: The maximum temp. in the forecast window, in Celsius.
+
+      - name: actual_max_temp
+        data_type: int64
+        description: The actual maximum temp. in the forecast window, in Celsius.
+
+      - name: max_temp_diff
+        data_type: int64
+        description: Difference between the forecasted and actual max_temp.
+
+      - name: abs_max_temp_diff
+        data_type: int64
+        description: Absolute value of max_temp_diff.
+
+      - name: min_temp
+        data_type: int64
+        description: The minimum temp. in the forecast window, in Celsius.
+
+      - name: actual_min_temp
+        data_type: int64
+        description: The actual minimum temp. in the forecast window, in Celsius.
+
+      - name: min_temp_diff
+        data_type: int64
+        description: Difference between the forecasted and actual min_temp.
+
+      - name: abs_min_temp_diff
+        data_type: int64
+        description: Absolute value of min_temp_diff.
+
+      - name: chill
+        data_type: int64
+        description: The chill in the forecast window, in Celsius.
+
+      - name: actual_chill
+        data_type: int64
+        description: The actual chill in the forecast window, in Celsius.
+
+      - name: min_chill_diff
+        data_type: int64
+        description: Difference between the forecasted and actual chill.
+
+      - name: abs_chill_diff
+        data_type: int64
+        description: Absolute value of min_chill_diff.
+
+
+
+
   - name: dim_geography
     description:  >
       Information related to the geographic location of each mountain, including the mountain
@@ -278,6 +498,8 @@ models:
         description: Field used for making geographic plots in Looker; a string of '{latitude},{longitude}'.
 
 
+
+
   - name: bridge_region_group
     description: >
       Bridge table that relates the region group to the corresponding regions, and appropriate
@@ -303,6 +525,8 @@ models:
       - name: weighting_factor
         data_type: numeric
         description: Equal to 1 / (number of the group's rows), used to normalize calculations.
+
+
 
 
   - name: dim_region
@@ -331,6 +555,8 @@ models:
         description: Name of the country where the region is found.
 
 
+
+
   - name: dim_time_zone
     description: Contains timezone data for each mountain.
 
@@ -355,6 +581,8 @@ models:
       - name: utc_diff
         data_type: string
         description: Offset of the time zone relative to UTC.
+
+
 
 
   - name: dim_sun
@@ -393,6 +621,8 @@ models:
         description: >
           Total amount of daylight on the mountain that day, calculated simply by the difference between 
           the sunset_time and sunrise_time.
+
+
 
 
   - name: dim_topography
@@ -444,6 +674,8 @@ models:
         description: Rank of the peak in terms of the world's most isolated mountains.
 
 
+
+
   - name: dim_mf_features
     description: >
       Contains information about the "mountain feature" at particular elevations according to 
@@ -473,6 +705,8 @@ models:
         description: >
           Feature at the particular elevation for that mountain, either "peak", "mid", or "base",
           according to mountain-forecast.com 
+
+
 
 
   - name: dim_mountaineering

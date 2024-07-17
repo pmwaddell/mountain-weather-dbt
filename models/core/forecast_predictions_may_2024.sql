@@ -59,6 +59,8 @@ forecasts as (
     from {{ ref("stg_forecasts") }}
 ),
 
+-- often, two "actual" rows will be present for a single forecast time
+-- in this case, I retain the one with the later issued date (time_rank = 1)
 forecasts_one_actual as (
     select * from forecasts
     where forecast_status = 'forecast' or time_rank = 1

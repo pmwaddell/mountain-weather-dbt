@@ -219,13 +219,17 @@ models:
         constraints:
           - type: not_null
 
-      - name: avg_wind_speed
-        data_type: int64
-        description: The average wind speed in June 2024, recorded in km/h.
-
       - name: avg_chill
-        data_type: int64
-        description: The chill in June 2024, in Celsius.
+        data_type: numeric
+        description: The average chill at that mountain/elevation in June 2024, in C.
+
+      - name: std_dev_chill
+        data_type: numeric
+        description: The chill's standard deviation at that mountain/elevation in June 2024, in C.
+
+      - name: avg_wind_speed
+        data_type: numeric
+        description: The average wind speed in June 2024, recorded in km/h.
 
 
 

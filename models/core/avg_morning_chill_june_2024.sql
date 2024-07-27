@@ -60,6 +60,7 @@ select
     f.elevation,
     feat.elevation_feature,
     round(avg(f.chill), 2) as avg_chill,
+    round(stddev(f.chill), 2) as std_dev_chill,
     round(avg(f.wind_speed), 2) as avg_wind_speed
 from forecasts as f
 

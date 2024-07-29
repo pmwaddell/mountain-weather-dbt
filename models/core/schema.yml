@@ -178,21 +178,7 @@ models:
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns:
             - mtn_name
-            - elevation
-
-    meta:
-      joins:
-        - to: dim_geography
-          type: left
-          join_on:
-            - from_field: geography_key
-              to_field: geography_key
-
-        - to: dim_mf_features
-          type: left
-          join_on:
-            - from_field: mf_features_key
-              to_field: mf_features_key    
+            - elevation  
 
     columns:
       - name: mtn_name
@@ -240,19 +226,12 @@ models:
       for April 2024, grouped by mountain, elevation, and forecast time name (i.e. morning,
       afternoon and night).
 
-    meta:
-      joins:
-        - to: dim_geography
-          type: left
-          join_on:
-            - from_field: geography_key
-              to_field: geography_key
-
-        - to: dim_mf_features
-          type: left
-          join_on:
-            - from_field: mf_features_key
-              to_field: mf_features_key    
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - mtn_name
+            - elevation
+            - forecast_time_name
 
     columns:
       - name: mtn_name

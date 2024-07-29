@@ -61,6 +61,8 @@ forecasts as (
 
 -- Often, two "actual" rows will be present for a single forecast time
 -- In this case, I retain the one with the later issued date (time_rank = 1)
+-- For this table, DO NOT use fact_forecasts_actual because, in that table,
+-- we had to drop the local_time_issued column, which we need here.
 forecasts_one_actual as (
     select * from forecasts
     where forecast_status = 'forecast' or time_rank = 1

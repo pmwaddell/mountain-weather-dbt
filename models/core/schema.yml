@@ -259,7 +259,7 @@ models:
 
 
 
-  - name: forecast_predictions_may_2024
+  - name: forecast_predictions
     description: >
       Model which determines the difference between forecasted weather data and the
       actual observed weather, as a function of time between the forecast and the event.
@@ -425,6 +425,14 @@ models:
       - name: abs_chill_diff
         data_type: int64
         description: Absolute value of min_chill_diff.
+
+
+
+
+  - name: forecast_predictions_may_2024
+    description: >
+      Subset of the forecast_predictions model for only May 2024. This table is used in certain
+      reports in Looker. The columns and joins are the same as in that table, see above.
 
 
 
